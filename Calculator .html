@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Neumorphic Calculator</title>
+  <style>
+      * {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  /* Light gradient background to match image surround */
+  background: linear-gradient(135deg, #e3f2fd 0%, #b2ebf2 100%);
+}
+
+/* Calculator Frame */
+.calculator {
+  width: 280px;
+  background-color: #2b333e;
+  border-radius: 12px;
+  padding: 24px 20px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+/* Target empty contenteditable elements with data-placeholder */
+.display[contenteditable="true"]:empty::before {
+  content: attr(data-placeholder);
+  color: #888; /* Placeholder text color */
+  pointer-events: none; /* Allows clicking through the placeholder text */
+  font-size: 15px;
+  display: block; /* Ensures proper alignment inside the div */
+}
+
+
+
+/* Screen Display */
+.display {
+  width: 100%;
+  height: 90px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-end;
+  font-size: 38px;
+  font-weight: 300;
+  color: #ffffff;
+  padding-bottom: 10px;
+  padding-right: 5px;
+  word-break: break-all;
+}
+
+/* Grid Layout */
+.buttons {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+/* Base Neumorphic Button Styling */
+.btn {
+  height: 52px;
+  border: none;
+  border-radius: 12px;
+  background: #2b333e;
+  color: #c2c8d0;
+  font-size: 16px;
+  font-weight: 400;
+  cursor: pointer;
+  transition: all 0.15s ease;
+
+  /* Neumorphic 3D Soft Shadow Effect */
+  box-shadow: 
+    -4px -4px 8px rgba(255, 255, 255, 0.05),
+     4px  4px 8px rgba(0, 0, 0, 0.4);
+}
+
+/* Pressed State */
+.btn:active {
+  box-shadow: 
+    inset -3px -3px 6px rgba(255, 255, 255, 0.05),
+    inset  3px  3px 6px rgba(0, 0, 0, 0.5);
+  transform: scale(0.98);
+}
+
+/* Green Operator & Action Buttons */
+.btn-action {
+  color: #10b981;
+}
+
+/* Wide Equal Button (Spans 2 Columns) */
+.btn-equal {
+  grid-column: span 2;
+  color: #10b981;
+}
+
+  </style>
+</head>
+<body>
+
+  <div class="background">
+    <div class="calculator">
+      <!-- Display Screen -->
+      <div class="display" id="display" contenteditable="true" data-placeholder="let's get calculating 😁😁😁"></div>
+
+      <!-- Keypad Grid -->
+      <div class="buttons">
+        <button class="btn btn-action" onclick="clearDisplay()">AC</button>
+        <button class="btn btn-action" onclick="deleteLast()">DE</button>
+        <button class="btn btn-action" onclick="appendSymbol('.')">.</button>
+        <button class="btn btn-action" onclick="appendSymbol('/')">/</button>
+
+        <button class="btn" onclick="appendSymbol('7')">7</button>
+        <button class="btn" onclick="appendSymbol('8')">8</button>
+        <button class="btn" onclick="appendSymbol('9')">9</button>
+        <button class="btn btn-action" onclick="appendSymbol('*')">x</button>
+
+        <button class="btn" onclick="appendSymbol('4')">4</button>
+        <button class="btn" onclick="appendSymbol('5')">5</button>
+        <button class="btn" onclick="appendSymbol('6')">6</button>
+        <button class="btn btn-action" onclick="appendSymbol('-')">-</button>
+
+        <button class="btn" onclick="appendSymbol('1')">1</button>
+        <button class="btn" onclick="appendSymbol('2')">2</button>
+        <button class="btn" onclick="appendSymbol('3')">3</button>
+        <button class="btn btn-action" onclick="appendSymbol('+')">+</button>
+
+        <button class="btn" onclick="appendSymbol('00')">00</button>
+        <button class="btn" onclick="appendSymbol('0')">0</button>
+        <button class="btn btn-equal" onclick="calculate()">=</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+      const display = document.getElementById('display');
+      
+      function appendSymbol(symbol){
+          if (display.innerText === '' || display.innerText === 'Error' || display.innerText === 'invalid'){
+              display.innerText = symbol;
+              
+          }else{
+            display.innerText += symbol;
+          }
+      }
+          
+      function clearDisplay(){
+          display.innerText = '';
+      }
+      
+      function calculate(){
+          //The Error Safety Net (try&catch)
+          try {
+              
+              if(display.innerText === 'invalid') {
+                  clearDisplay();
+                  display.innerText = '';
+              } else{
+                  
+              // Evaluate math expression
+              const result = display.innerText.replace(/x/g, '*');
+              
+              //Whitelist: ONLY allow numbers, decimals, spaces, and + - * () ÷ etc
+              const isValidMath = /^[0-9+\-*/().\s]+$/.test(result);
+              
+              if (isValidMath){
+                  display.innerText = eval(result);
+              } else{
+                  display.innerText = "invalid";
+              }
+              
+              }
+              
+          } catch (e) {
+              display.innerText = 'Error';
+              }
+      }
+    
+      function deleteLast(){
+          if (display.innerText.length === 1 || display.innerText === 'Error' || display.innerText === 'invalid') {
+           display.innerText = '';
+        } else {
+           display.innerText = display.innerText.slice(0, -1);
+        }
+      }
+     
+  </script>
+</body>
+</html>
+
+
+
+
+
+
